@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JobBoard.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260413134935_InitialCreate")]
+    [Migration("20260413143126_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -119,13 +119,13 @@ namespace JobBoard.Migrations
                     b.HasOne("JobBoard.Models.User", "Freelancer")
                         .WithMany("Applications")
                         .HasForeignKey("FreelancerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Models.Job", "Job")
                         .WithMany("Applications")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Freelancer");

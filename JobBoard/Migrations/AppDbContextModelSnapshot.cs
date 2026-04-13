@@ -116,13 +116,13 @@ namespace JobBoard.Migrations
                     b.HasOne("JobBoard.Models.User", "Freelancer")
                         .WithMany("Applications")
                         .HasForeignKey("FreelancerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("JobBoard.Models.Job", "Job")
                         .WithMany("Applications")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Freelancer");
