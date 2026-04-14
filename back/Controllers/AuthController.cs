@@ -20,6 +20,10 @@ namespace JobBoard.Controllers
         public async Task<IActionResult> Register(RegisterDto dto)
         {
             var result = await _authService.Register(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
             return Ok(result);
         }
 

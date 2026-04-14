@@ -41,22 +41,31 @@ public async Task<AuthResponseDto> Login(LoginDto dto)
     };
 }
 
-        public async Task<string> Register(RegisterDto dto)
-        {
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
-                return "Email already exists";
-
-            var user = new User
+    public async Task<AuthResponseDto> Register(RegisterDto dto)
+    {
+        if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+            return new AuthResponseDto
             {
-                Name = dto.Name,
-                Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                Role = dto.Role
+                IsSuccess = false,
+                Message = "Email already exists"
             };
 
-            _context.Add(user);
-             await _context.SaveChangesAsync();
-             return GenerateToken(user);
+        var user = new User
+        {
+            Name = dto.Name,
+            Email = dto.Email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+            Role = dto.Role
+        };
+
+        _context.Add(user);
+        await _context.SaveChangesAsync();
+
+        return new AuthResponseDto
+        {
+        IsSuccess = true,
+        Token = GenerateToken(user)
+        };
         }
         private string GenerateToken(User user)
         {

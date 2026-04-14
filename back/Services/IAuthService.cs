@@ -5,7 +5,7 @@ namespace JobBoard.Services
 {
     public interface IAuthService
     {
-        Task<string> Register (RegisterDto dto);
+        Task<AuthResponseDto> Register (RegisterDto dto);
         Task<AuthResponseDto> Login (LoginDto dto);
     }
 }
