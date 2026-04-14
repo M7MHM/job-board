@@ -27,6 +27,10 @@ namespace JobBoard.Controllers
         public async Task<IActionResult> Login(LoginDto dto)
         {
             var result = await _authService.Login(dto);
+
+            if (!result.IsSuccess)
+                return BadRequest(result);
+
             return Ok(result);
         }
     }

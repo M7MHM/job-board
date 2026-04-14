@@ -1,4 +1,5 @@
-﻿using BCrypt.Net;
+﻿using back.Dtos;
+using BCrypt.Net;
 using JobBoard.Data;
 using JobBoard.Dtos;
 using JobBoard.Models;
@@ -19,16 +20,26 @@ namespace JobBoard.Services
             _config = config;
             _context = context;
         }
-        public async Task<string> Login(LoginDto dto)
+public async Task<AuthResponseDto> Login(LoginDto dto)
+{
+    var user = await _context.Users
+        .FirstOrDefaultAsync(u => u.Email == dto.Email);
+
+    if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+    {
+        return new AuthResponseDto
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+            IsSuccess = false,
+            Message = "Invalid credentials"
+        };
+    }
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password , user.PasswordHash)) 
-                return "Invalid credentials";
-
-            return GenerateToken(user);
-
-        }
+    return new AuthResponseDto
+    {
+        IsSuccess = true,
+        Token = GenerateToken(user)
+    };
+}
 
         public async Task<string> Register(RegisterDto dto)
         {
