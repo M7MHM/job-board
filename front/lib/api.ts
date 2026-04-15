@@ -1,6 +1,5 @@
-const API_URL = 'https://localhost:7161/api'
+const API_URL = 'http://localhost:5067/api'
 
-// Auth endpoints
 export const authApi = {
   login: async (data: { email: string; password: string }) => {
     const response = await fetch(`${API_URL}/auth/login`, {
@@ -21,19 +20,17 @@ export const authApi = {
   },
 }
 
-// Jobs endpoints
 export const jobsApi = {
   getAll: async () => {
     const response = await fetch(`${API_URL}/jobs`)
     return response.json()
   },
 
-  create: async (data: { title: string; description: string }, token: string) => {
+  create: async (data: { title: string; description: string }) => {
     const response = await fetch(`${API_URL}/jobs`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(data),
     })
@@ -41,27 +38,23 @@ export const jobsApi = {
   },
 }
 
-// Applications endpoints
 export const applicationsApi = {
-  apply: async (jobId: number, token: string) => {
+  apply: async (jobId: number) => {
     const response = await fetch(`${API_URL}/applications/apply/${jobId}`, {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` }
     })
     return response.json()
   },
 
-  getMine: async (token: string) => {
+  getMine: async () => {
     const response = await fetch(`${API_URL}/applications/my`, {
-      headers: { 'Authorization': `Bearer ${token}` }
     })
     return response.json()
   },
 
-  updateStatus: async (appId: number, status: string, token: string) => {
+  updateStatus: async (appId: number, status: string) => {
     const response = await fetch(`${API_URL}/applications/status/${appId}?status=${status}`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${token}` }
     })
     return response.json()
   },

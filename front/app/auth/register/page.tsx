@@ -39,7 +39,7 @@ export default function RegisterPage() {
         router.push('/dashboard')
       } else if (typeof response === 'string') {
         authUtils.setToken(response)
-        router.push('/dashboard')
+        router.push('/auth/login')
       } else {
         setError('register failed. Please check your credentials.')
       }
