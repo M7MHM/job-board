@@ -13,8 +13,9 @@ import {
   CardContent,
   CardTitle
 } from "@/components/ui/card"
-import { API_URL } from '@/app/lib/api'
 import { useRouter } from 'next/navigation'
+import { authApi } from '@/lib/api'
+import { authUtils } from '@/lib/auth'
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -24,40 +25,32 @@ export default function RegisterPage() {
     password: '',
     role: ''
   })
-
+  const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
-
     try {
-         const res = await fetch(`${API_URL}/auth/register`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(formData)
-        })
+      const response = await authApi.register(formData)
 
-        const data = await res.json()
+      if (response?.token) {
+        authUtils.setToken(response.token)
+        router.push('/dashboard')
+      } else if (typeof response === 'string') {
+        authUtils.setToken(response)
+        router.push('/dashboard')
+      } else {
+        setError('register failed. Please check your credentials.')
+      }
 
-        if (!res.ok) {
-        throw new Error(data.message || "Registration failed")
-        }
-
-        localStorage.setItem("token", data.token)
-
-        console.log("Register success:", data)
-            } catch (error) {
-            console.error('Registration failed:', error)
-            } finally {
-            setLoading(false)
-            }
-            router.push(`/auth/login`)
-            router.refresh();
-        }
-
+    } catch (err) {
+      console.error('register error:', err)
+      setError('Network error. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
 
@@ -74,6 +67,12 @@ export default function RegisterPage() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
 
             <div className="grid gap-2">
               <Label htmlFor="name">Full Name</Label>
@@ -103,7 +102,6 @@ export default function RegisterPage() {
               />
             </div>
 
-            {/* Password */}
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
               <Input
